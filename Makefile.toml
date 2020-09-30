@@ -1,0 +1,14 @@
+# Common holochain `cargo make` scripts.
+# This file is designed to be as small as possible,
+# pulling in the real scripts from the common repository.
+
+# Extend this file with holochain common `cargo make` tasks
+# The extension toml will be downloaded via [config] load_script below
+extend = "common-cargo-make.toml"
+
+[config]
+# Here we check for a new common script at most once per hour.
+# Special care is taken to make sure we still use an old script
+# if we cannot reach the remote (i.e. no network connection).
+linux_load_script = ["if [ ! -f ./common-cargo-make.toml ] || [ $(($(date +%s) - $(stat -c %Y ./common-cargo-make.toml))) -gt 3600 ]; then curl --proto '=https' --tlsv1.2 -lsSfo common-cargo-make.toml https://gist.githubusercontent.com/neonphog/f034944d6960f72f2e1cb18c2961457b/raw || true; fi"]
+# we can define separate mac and windows load scripts too
